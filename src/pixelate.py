@@ -260,7 +260,16 @@ ax.set_xticklabels([])
 plt.savefig('C:/Users/Justine/Documents/GitHub/pixelate/fig/thrice/translation.jpg')
 
 ##count colors
+buy_color = []
+buy_count = []
+
 for color in unique_herrschners:
-    print(color, ": ", np.argwhere(rug_herrschners == color).shape[0], " strings")
+    buy_color.append(color)
+    buy_count.append(np.argwhere(rug_herrschners == color).shape[0])
 
+df2 = pd.DataFrame({'color': buy_color, 'strings': buy_count})
 
+df2['packages'] = df2['strings']/320
+
+print(df2)
+df2.to_csv("C:/Users/Justine/Documents/GitHub/pixelate/data/thrice/buy_strings.csv", index=False)  
