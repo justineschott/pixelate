@@ -109,7 +109,7 @@ rug = load_img(github_filepath+'/pixelate/fig/thrice/thrice.jpg')
 # 2. No leftover pixels at the edges
 # This means that some squares might have one more or one less pixel
 # depending on rounding
-num_cols = 74
+num_cols = 75
 square_w = float(rug.shape[1]) / num_cols
 num_rows = int(round(rug.shape[0] / square_w))
 square_h = float(rug.shape[0]) / num_rows
