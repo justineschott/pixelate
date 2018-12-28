@@ -109,7 +109,7 @@ rug = load_img(github_filepath+'/pixelate/fig/thrice/thrice.jpg')
 # 2. No leftover pixels at the edges
 # This means that some squares might have one more or one less pixel
 # depending on rounding
-num_cols = 75
+num_cols = 74
 square_w = float(rug.shape[1]) / num_cols
 num_rows = int(round(rug.shape[0] / square_w))
 square_h = float(rug.shape[0]) / num_rows
@@ -199,7 +199,8 @@ for p in range(rug_small.shape[0]):
         rug_herrschners[p,q] = array_herrschners[q]
 
 df = pd.DataFrame(rug_herrschners)
-df.to_csv(github_filepath+"/pixelate/data/thrice/rug_herrschners_thrice.csv", index=False)  
+df.to_csv(github_filepath+"/pixelate/data/thrice/rug_herrschners_thrice.csv", index=False, columns=None)  
+np.save(github_filepath+"/pixelate/data/thrice/rug_rgb_thrice.npy",rug_small)
 
 ## create array of herrschners RBGs in image
 #herrschner color name conversions
