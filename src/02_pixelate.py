@@ -212,7 +212,8 @@ for p in range(rug_small.shape[0]):
         rug_herrschners[p,q] = array_herrschners[q]
 
 df = pd.DataFrame(rug_herrschners)
-df.to_csv(github_filepath+"/pixelate/data/'+rug_name+'/rug_herrschners.csv", index=False)  
+df.to_csv(github_filepath+'/pixelate/data/'+rug_name+'/rug_herrschners.csv', index=False, columns=None)  
+np.save(github_filepath+'/pixelate/data/'+rug_name+'/rug_rgb_'+rug_name+'.npy',rug_small)
 
 ## create array of herrschners RBGs in image
 #herrschner color name conversions
