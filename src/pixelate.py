@@ -1,24 +1,23 @@
-##imports
+##import packages
 import matplotlib.pyplot as plt
 import numpy as np
 import imageio
 from PIL import Image
-import scipy.misc
 import webcolors
 import pandas as pd
 import matplotlib.patches as patches
-import matplotlib.colors as colors
 import math
-import glob
 import re
 import csv
+import cv2
+import sys
 
 import os
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 github_filepath = os.environ.get("github_filepath")
 
-
+##import files
 herrschners_name = {}
 with open(github_filepath+'/pixelate/data/herrschners_name.csv', 'r') as csv_file:
     reader = csv.reader(csv_file)
@@ -27,6 +26,7 @@ with open(github_filepath+'/pixelate/data/herrschners_name.csv', 'r') as csv_fil
 for k, v in herrschners_name.items():
     herrschners_name[k] = [int(i) for i in re.sub(r' +', ' ', v).replace('[', '').replace(']', '').lstrip().split(' ')]
 
+##define classes
 # create closest color with this dict
 def closest_herrschners_name(requested_rgb):
     min_colours = {}
@@ -54,11 +54,11 @@ def make_one_square(img, row, col, square_h, square_w):
     # Sets all the pixels in img for the square given by (row, col) to that
     # square's average color
     pixels = []
-
-    # get all pixels
+    
+        # get all pixels
     for y, x in all_square_pixels(row, col, square_h, square_w):
-        pixels.append(img[y][x])
-
+        pixels.append(rug[y][x])
+    
     # get the average color
     av_r = 0
     av_g = 0
@@ -95,13 +95,26 @@ def distance(c1, c2):
     b2 = c2[1]
     g2 = c2[2]
     return math.sqrt((r1 - r2)**2 + (g1 - g2)**2 + (b1 - b2)**2)
-    
 
+## define imports
+rug_name = sys.argv[1]    
+extension =  sys.argv[2]
+num_cols = sys.argv[3]
     
 ## pixelate rug image
-
 #load image
-rug = load_img(github_filepath+'/pixelate/fig/thrice/thrice.jpg')
+try:
+    rug = load_img(github_filepath+'/pixelate/fig/'+rug_name+'/'+rug_name +'.'+extension)
+except IOError:
+    sys.exit('Check filename -- cannot find file')
+
+#convert png
+if extension == 'png':
+    rug = cv2.cvtColor(rug, cv2.COLOR_BGRA2BGR)
+elif extension == 'jpg':
+    pass
+else:
+    sys.exit('Image extension must be png or jpg')
 
 # Figure out the dimensions of each square
 # We want:
@@ -109,7 +122,6 @@ rug = load_img(github_filepath+'/pixelate/fig/thrice/thrice.jpg')
 # 2. No leftover pixels at the edges
 # This means that some squares might have one more or one less pixel
 # depending on rounding
-num_cols = 75
 square_w = float(rug.shape[1]) / num_cols
 num_rows = int(round(rug.shape[0] / square_w))
 square_h = float(rug.shape[0]) / num_rows
@@ -117,10 +129,11 @@ square_h = float(rug.shape[0]) / num_rows
 # overwrite each square with the average color, one by one
 # also create new smaller matrix with the average color
 rug_small = np.zeros([num_rows,num_cols,3], dtype='uint8')
+ 
 for row in range(num_rows):
     for col in range(num_cols):
         rug_small[row,col] = make_one_square(rug, row, col, square_h, square_w)
-        
+       
 
 # show the image
 plt.axis('on')
@@ -134,10 +147,10 @@ ax.set_xticklabels([])
 
 # save the image with gridlines
 #plt.show()
-plt.savefig(github_filepath+'/pixelate/fig/thrice/thrice_gridlines.jpg')
+plt.savefig(github_filepath+'/pixelate/fig/'+rug_name+'/'+rug_name+'_gridlines.jpg')
 
 # save the image pixelated
-imageio.imwrite(github_filepath+'/pixelate/fig/thrice/thrice_pixelated.jpg', rug)
+imageio.imwrite(github_filepath+'/pixelate/fig/'+rug_name+'/'+rug_name+'_pixelated.'+extension, rug)
 
 ## create list of unique herrschners colors in image
 unique_arrays = unique_rgb(rug_small)
@@ -148,7 +161,7 @@ for unique_array in unique_arrays:
     unique_herrschners = np.append(unique_herrschners, closest_herrschners_name(unique_array.tolist()))   
 unique_herrschners = np.unique(unique_herrschners)
 df = pd.DataFrame(unique_herrschners)    
-df.to_csv(github_filepath+"/pixelate/data/thrice/colors.csv")
+df.to_csv(github_filepath+'/pixelate/data/'+rug_name+'/colors.csv')
 
 ## plot all herrschners colors in image
 color_plts = []
@@ -186,7 +199,7 @@ for color_flt in color_flts:
         c += 1
 
 #plt.show()
-plt.savefig(github_filepath+'/pixelate/fig/thrice/string.jpg')
+plt.savefig(github_filepath+'/pixelate/fig/'+rug_name+'/string.jpg')
 
 ## create array of herrschners colors in image
 #herrschner color name conversions
@@ -199,7 +212,7 @@ for p in range(rug_small.shape[0]):
         rug_herrschners[p,q] = array_herrschners[q]
 
 df = pd.DataFrame(rug_herrschners)
-df.to_csv(github_filepath+"/pixelate/data/thrice/rug_herrschners_thrice.csv", index=False)  
+df.to_csv(github_filepath+"/pixelate/data/'+rug_name+'/rug_herrschners.csv", index=False)  
 
 ## create array of herrschners RBGs in image
 #herrschner color name conversions
@@ -222,7 +235,7 @@ ax.set_yticklabels([])
 ax.set_xticklabels([])
 
 #plt.show()
-plt.savefig(github_filepath+'/pixelate/fig/thrice/translation.jpg')
+plt.savefig(github_filepath+'/pixelate/fig/'+rug_name+'/translation.jpg')
 
 ##count colors
 buy_color = []
@@ -236,4 +249,4 @@ df2 = pd.DataFrame({'color': buy_color, 'strings': buy_count})
 
 df2['packages'] = df2['strings']/320
 
-df2.to_csv(github_filepath+"/pixelate/data/thrice/buy_strings.csv", index=False)  
+df2.to_csv(github_filepath+"/pixelate/data/'+rug_name+'/buy_strings.csv", index=False)  
