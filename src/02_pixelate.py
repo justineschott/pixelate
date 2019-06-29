@@ -100,7 +100,8 @@ def distance(c1, c2):
 rug_name = sys.argv[1]    
 extension =  sys.argv[2]
 num_cols = sys.argv[3]
-    
+
+
 ## pixelate rug image
 #load image
 try:
@@ -250,4 +251,4 @@ df2 = pd.DataFrame({'color': buy_color, 'strings': buy_count})
 
 df2['packages'] = df2['strings']/320
 
-df2.to_csv(github_filepath+"/pixelate/data/'+rug_name+'/buy_strings.csv", index=False)  
+df2.to_csv(github_filepath+'/pixelate/data/'+rug_name+'/buy_strings.csv', index=False)  
