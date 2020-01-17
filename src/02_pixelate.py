@@ -16,7 +16,7 @@ import xlsxwriter
 import os
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
-github_filepath = os.environ.get("github_filepath")
+github_filepath = os.environ.get("github_filepath") #'C:/Users/jesch/OneDrive/Documents/GitHub/'
 
 ##import files
 herrschners_name = {}
@@ -100,7 +100,7 @@ def distance(c1, c2):
 ## define imports
 rug_name = sys.argv[1]    
 extension =  sys.argv[2]
-num_cols = sys.argv[3]
+num_cols = int(sys.argv[3])
 
 
 ## pixelate rug image
@@ -149,7 +149,7 @@ ax.set_xticklabels([])
 
 # save the image with gridlines
 #plt.show()
-plt.savefig(github_filepath+'/pixelate/fig/'+rug_name+'/'+rug_name+'_gridlines.jpg')
+plt.savefig(github_filepath+'/pixelate/fig/'+rug_name+'/'+rug_name+'_gridlines.png')
 
 # save the image pixelated
 imageio.imwrite(github_filepath+'/pixelate/fig/'+rug_name+'/'+rug_name+'_pixelated.'+extension, rug)
@@ -201,7 +201,7 @@ for color_flt in color_flts:
         c += 1
 
 #plt.show()
-plt.savefig(github_filepath+'/pixelate/fig/'+rug_name+'/string.jpg')
+plt.savefig(github_filepath+'/pixelate/fig/'+rug_name+'/string.png')
 
 ## create array of herrschners colors in image
 #herrschner color name conversions
@@ -255,7 +255,7 @@ ax.set_yticklabels([])
 ax.set_xticklabels([])
 
 #plt.show()
-plt.savefig(github_filepath+'/pixelate/fig/'+rug_name+'/translation.jpg')
+plt.savefig(github_filepath+'/pixelate/fig/'+rug_name+'/translation.png')
 
 ##count colors
 buy_color = []
