@@ -11,6 +11,7 @@ import re
 import csv
 import cv2
 import sys
+import xlsxwriter
 
 import os
 from dotenv import load_dotenv, find_dotenv
@@ -213,8 +214,25 @@ for p in range(rug_small.shape[0]):
         rug_herrschners[p,q] = array_herrschners[q]
 
 df = pd.DataFrame(rug_herrschners)
-df.to_csv(github_filepath+'/pixelate/data/'+rug_name+'/rug_herrschners.csv', index=False, columns=None)  
 np.save(github_filepath+'/pixelate/data/'+rug_name+'/rug_rgb_'+rug_name+'.npy',rug_small)
+
+## format rug document
+df.to_csv(github_filepath+'/pixelate/data/'+rug_name+'/rug_herrschners.csv', index=False, columns=None)  
+
+writer = pd.ExcelWriter(github_filepath+'/pixelate/data/'+rug_name+'/rug_herrschners.xlsx', engine='xlsxwriter')
+df.to_excel(writer, sheet_name='Sheet1')
+workbook  = writer.book
+worksheet = writer.sheets['Sheet1']
+
+#conditional format for all herrschners colors
+for name, rgb in herrschners_name.items():
+    format = workbook.add_format({'bg_color': webcolors.rgb_to_hex(rgb), 'font_color': webcolors.name_to_hex('black')})
+    worksheet.conditional_format('B2:'+xlsxwriter.utility.xl_col_to_name(num_cols)+str(num_rows+1), {'type': 'cell', 'criteria': 'equal to', 'value': '"'+name+'"', 'format': format})
+
+#set column width to create ruglike appearance
+worksheet.set_column(0, num_cols, 2.2)
+
+writer.save()
 
 ## create array of herrschners RBGs in image
 #herrschner color name conversions
