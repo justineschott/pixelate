@@ -115,8 +115,10 @@ if extension == 'png':
     rug = cv2.cvtColor(rug, cv2.COLOR_BGRA2BGR)
 elif extension == 'jpg':
     pass
+elif extension == 'jpeg':
+    pass
 else:
-    sys.exit('Image extension must be png or jpg')
+    sys.exit('Image extension must be png, jpg, jpeg')
 
 # Figure out the dimensions of each square
 # We want:
